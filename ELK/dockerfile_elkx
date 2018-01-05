@@ -1,0 +1,23 @@
+FROM docker.elastic.co/elasticsearch/elasticsearch-platinum:6.1.1
+MAINTAINER xxf
+
+ENV ELASTIC_PASSWORD Password123
+ENV XPACK_VERSION 6.1.1
+ENV XPACK_PACKAGE x-pack-${XPACK_VERSION}.zip
+
+RUN rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+ADD kibana.repo /etc/yum.repos.d/
+RUN yum -y install kibana
+
+RUN /usr/share/kibana/bin/kibana-plugin install x-pack
+
+
+
+RUN   echo "server.host: 0.0.0.0" >> /etc/kibana/kibana.yml
+RUN   echo "elasticsearch.username: \"elastic\"" >> /etc/kibana/kibana.yml
+RUN   echo "elasticsearch.password: \"Password123\"" >> /etc/kibana/kibana.yml
+
+
+CMD /etc/init.d/kibana start && /usr/local/bin/docker-entrypoint.sh eswrapper
+
+
